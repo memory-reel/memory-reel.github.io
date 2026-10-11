@@ -1,0 +1,19 @@
+---
+import AppPage from '../../components/AppPage.astro';
+import { LOCALES, type Locale } from '../../i18n/translations';
+
+export function getStaticPaths() {
+  return LOCALES.map((loc) => ({
+    params: { lang: loc.code },
+    props: { locale: loc.code },
+  }));
+}
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+---
+
+<AppPage locale={locale} />

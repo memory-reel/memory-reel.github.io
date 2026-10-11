@@ -1,0 +1,205 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Navbar from './Navbar.astro';
+import Storyboard from './Storyboard';
+import { getTranslations, type Locale } from '../i18n/translations';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = getTranslations(locale);
+---
+
+<Layout locale={locale}>
+  <Navbar locale={locale} />
+
+  <main class="flex-1">
+    <!-- Hero Header Section -->
+    <section
+      class="relative overflow-hidden pt-10 pb-8 sm:pt-14 sm:pb-12 border-b border-[#4D8DBA]/25 dark:border-[#97D7FF]/20"
+    >
+      <!-- Ambient Background Glow (#97D7FF & #FFEFC4) -->
+      <div
+        class="pointer-events-none absolute -top-24 left-1/2 -translate-x-1/2 w-[720px] h-[280px] rounded-full bg-gradient-to-tr from-[#97D7FF]/35 via-[#4D8DBA]/20 to-[#FFEFC4]/45 dark:from-[#086288]/40 dark:via-[#4D8DBA]/25 dark:to-[#FFEFC4]/15 blur-3xl"
+        aria-hidden="true"
+      >
+      </div>
+
+      <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <div
+          class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#FFEFC4]/80 dark:bg-[#086288]/70 border border-[#086288]/20 dark:border-[#97D7FF]/35 text-[#086288] dark:text-[#FFEFC4] text-xs font-semibold mb-5 shadow-sm"
+        >
+          <span class="w-2 h-2 rounded-full bg-[#086288] dark:bg-[#97D7FF] animate-pulse"></span>
+          <span>{t.hero.badge}</span>
+        </div>
+
+        <h1
+          class="font-display font-extrabold text-3xl sm:text-5xl lg:text-6xl tracking-tight text-[#086288] dark:text-white max-w-4xl mx-auto leading-[1.12]"
+        >
+          {t.hero.titleStart}{' '}
+          <span
+            class="bg-gradient-to-r from-[#086288] via-[#4D8DBA] to-[#086288] dark:from-[#97D7FF] dark:via-[#FFEFC4] dark:to-[#97D7FF] bg-clip-text text-transparent"
+          >
+            {t.hero.titleHighlight}
+          </span>
+        </h1>
+
+        <p
+          class="mt-4 text-sm sm:text-base lg:text-lg text-slate-600 dark:text-slate-300 max-w-2xl mx-auto leading-relaxed"
+        >
+          {t.hero.subtitle}
+        </p>
+
+        <!-- Key Architecture Highlights -->
+        <div class="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-3.5 max-w-3xl mx-auto text-left">
+          <div class="card-surface p-3.5 flex items-center gap-3">
+            <div
+              class="w-9 h-9 rounded-xl bg-[#086288] text-[#FFEFC4] flex items-center justify-center shrink-0 font-bold text-sm shadow-sm"
+            >
+              01
+            </div>
+            <div>
+              <p class="text-xs font-bold text-[#086288] dark:text-[#FFEFC4]">{t.hero.statZeroServer}</p>
+              <p class="text-[11px] text-slate-500 dark:text-slate-300">{t.hero.statZeroServerDesc}</p>
+            </div>
+          </div>
+
+          <div class="card-surface p-3.5 flex items-center gap-3">
+            <div
+              class="w-9 h-9 rounded-xl bg-[#4D8DBA] text-white flex items-center justify-center shrink-0 font-bold text-sm shadow-sm"
+            >
+              02
+            </div>
+            <div>
+              <p class="text-xs font-bold text-[#086288] dark:text-[#97D7FF]">{t.hero.stat1080p}</p>
+              <p class="text-[11px] text-slate-500 dark:text-slate-300">{t.hero.stat1080pDesc}</p>
+            </div>
+          </div>
+
+          <div class="card-surface p-3.5 flex items-center gap-3">
+            <div
+              class="w-9 h-9 rounded-xl bg-[#FFEFC4] text-[#086288] border border-[#086288]/20 flex items-center justify-center shrink-0 font-bold text-sm shadow-sm"
+            >
+              03
+            </div>
+            <div>
+              <p class="text-xs font-bold text-[#086288] dark:text-[#FFEFC4]">{t.hero.statInstant}</p>
+              <p class="text-[11px] text-slate-500 dark:text-slate-300">{t.hero.statInstantDesc}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Main Interactive React Studio Island (MediaUploader + Sortable Storyboard + VideoRenderer) -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+      <Storyboard client:load locale={locale} includeUploader={true} />
+    </div>
+
+    <!-- Technical SEO & Educational Architecture Section -->
+    <section
+      class="border-t border-[#4D8DBA]/25 dark:border-[#97D7FF]/20 bg-[#97D7FF]/10 dark:bg-[#072534]/50 py-14 sm:py-20"
+    >
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-14">
+        <!-- 3-Step Architecture Explanation -->
+        <div>
+          <h2
+            class="font-display text-2xl sm:text-3xl font-bold text-center text-[#086288] dark:text-[#FFEFC4] mb-8"
+          >
+            {t.seoSection.howItWorksTitle}
+          </h2>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <article class="card-surface p-6">
+              <h3 class="font-display font-bold text-base text-[#086288] dark:text-[#97D7FF] mb-2">
+                {t.seoSection.step1Title}
+              </h3>
+              <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+                {t.seoSection.step1Desc}
+              </p>
+            </article>
+
+            <article class="card-surface p-6">
+              <h3 class="font-display font-bold text-base text-[#086288] dark:text-[#97D7FF] mb-2">
+                {t.seoSection.step2Title}
+              </h3>
+              <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+                {t.seoSection.step2Desc}
+              </p>
+            </article>
+
+            <article class="card-surface p-6">
+              <h3 class="font-display font-bold text-base text-[#086288] dark:text-[#97D7FF] mb-2">
+                {t.seoSection.step3Title}
+              </h3>
+              <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+                {t.seoSection.step3Desc}
+              </p>
+            </article>
+          </div>
+        </div>
+
+        <!-- FAQ Section -->
+        <div class="max-w-3xl mx-auto">
+          <h2
+            class="font-display text-2xl font-bold text-center text-[#086288] dark:text-[#FFEFC4] mb-6"
+          >
+            {t.seoSection.faqTitle}
+          </h2>
+          <div class="space-y-4">
+            <div class="card-surface p-5">
+              <h3 class="font-display font-bold text-sm sm:text-base text-[#086288] dark:text-[#97D7FF]">
+                {t.seoSection.faq1Q}
+              </h3>
+              <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mt-1.5 leading-relaxed">
+                {t.seoSection.faq1A}
+              </p>
+            </div>
+
+            <div class="card-surface p-5">
+              <h3 class="font-display font-bold text-sm sm:text-base text-[#086288] dark:text-[#97D7FF]">
+                {t.seoSection.faq2Q}
+              </h3>
+              <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mt-1.5 leading-relaxed">
+                {t.seoSection.faq2A}
+              </p>
+            </div>
+
+            <div class="card-surface p-5">
+              <h3 class="font-display font-bold text-sm sm:text-base text-[#086288] dark:text-[#97D7FF]">
+                {t.seoSection.faq3Q}
+              </h3>
+              <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mt-1.5 leading-relaxed">
+                {t.seoSection.faq3A}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Minimalist Footer -->
+  <footer
+    class="border-t border-[#4D8DBA]/25 dark:border-[#97D7FF]/20 py-8 bg-white dark:bg-[#041821] text-xs text-slate-500 dark:text-slate-400"
+  >
+    <div
+      class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4"
+    >
+      <div>
+        <p class="font-semibold text-[#086288] dark:text-[#97D7FF]">{t.seoSection.footerCopyright}</p>
+        <p class="mt-0.5">{t.seoSection.footerPrivacyNote}</p>
+      </div>
+
+      <a
+        href="https://buymeacoffee.com/kisharadilz"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#FFEFC4] hover:bg-[#97D7FF] text-[#086288] border border-[#086288]/20 font-bold transition-colors shadow-sm"
+      >
+        <span>☕ {t.nav.supportCta}</span>
+      </a>
+    </div>
+  </footer>
+</Layout>

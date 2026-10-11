@@ -1,0 +1,40 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: light;
+    --color-deep: #086288;
+    --color-ocean: #4D8DBA;
+    --color-sky: #97D7FF;
+    --color-cream: #FFEFC4;
+  }
+
+  html.dark {
+    color-scheme: dark;
+  }
+
+  body {
+    @apply bg-surface-light text-slate-900 dark:bg-surface-dark dark:text-slate-100 antialiased selection:bg-[#97D7FF]/50 selection:text-[#086288] dark:selection:bg-[#97D7FF]/30 dark:selection:text-[#FFEFC4] transition-colors duration-200;
+  }
+}
+
+/* Custom sleek scrollbar for horizontal storyboard on desktop */
+.storyboard-scroll::-webkit-scrollbar {
+  height: 8px;
+  width: 8px;
+}
+
+.storyboard-scroll::-webkit-scrollbar-track {
+  @apply bg-[#97D7FF]/20 dark:bg-[#086288]/30 rounded-full;
+}
+
+.storyboard-scroll::-webkit-scrollbar-thumb {
+  @apply bg-[#4D8DBA]/60 dark:bg-[#4D8DBA]/80 rounded-full hover:bg-[#086288] dark:hover:bg-[#97D7FF] transition-colors;
+}
+
+/* Subtle glass card surfaces */
+.card-surface {
+  @apply bg-white dark:bg-surface-dark-card border border-[#4D8DBA]/25 dark:border-[#97D7FF]/20 shadow-soft-light dark:shadow-glow-dark rounded-2xl transition-all duration-200;
+}

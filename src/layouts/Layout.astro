@@ -1,0 +1,123 @@
+---
+import '../styles/global.css';
+import { LOCALES, getTranslations, type Locale } from '../i18n/translations';
+
+interface Props {
+  locale?: Locale;
+}
+
+const { locale = 'en' } = Astro.props;
+const t = getTranslations(locale);
+
+const siteUrl = 'https://memory-reel.github.io';
+const canonicalPath = locale === 'en' ? '/' : `/${locale}/`;
+const canonicalUrl = new URL(canonicalPath, siteUrl).toString();
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: 'MemoryReel',
+  headline: t.meta.title,
+  description: t.meta.description,
+  url: canonicalUrl,
+  applicationCategory: 'MultimediaApplication',
+  operatingSystem: 'Any (Web Browser)',
+  offers: {
+    '@type': 'Offer',
+    price: '0',
+    priceCurrency: 'USD',
+  },
+  featureList: [
+    '100% Client-Side Photo to Video Slideshow Creator',
+    'Zero Server Uploads for Complete Privacy',
+    'Automatic Off-Screen 1080p Image Downscaling',
+    'Interactive Drag-and-Drop Storyboard Timeline',
+    'HTML5 Canvas & MediaRecorder Video Stitching with Audio',
+  ],
+  author: {
+    '@type': 'Person',
+    name: 'Kishara Dilz',
+    url: 'https://buymeacoffee.com/kisharadilz',
+  },
+};
+---
+
+<!doctype html>
+<html lang={locale} class="scroll-smooth">
+  <head>
+    <!-- Google tag (gtag.js) -->
+    <script is:inline async src="https://www.googletagmanager.com/gtag/js?id=G-6L7K4LNZFD"></script>
+    <script is:inline>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-6L7K4LNZFD');
+    </script>
+
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{t.meta.title}</title>
+    <meta name="description" content={t.meta.description} />
+    <meta name="keywords" content={t.meta.keywords} />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href={canonicalUrl} />
+
+    <!-- Alternate hreflang tags for en, es, fr, de -->
+    <link rel="alternate" hreflang="x-default" href={`${siteUrl}/`} />
+    {
+      LOCALES.map((loc) => (
+        <link
+          rel="alternate"
+          hreflang={loc.code}
+          href={loc.code === 'en' ? `${siteUrl}/` : `${siteUrl}/${loc.code}/`}
+        />
+      ))
+    }
+
+    <!-- OpenGraph / Social Meta -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="MemoryReel" />
+    <meta property="og:title" content={t.meta.title} />
+    <meta property="og:description" content={t.meta.description} />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:locale" content={locale} />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={t.meta.title} />
+    <meta name="twitter:description" content={t.meta.description} />
+
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="theme-color" content="#FCFBF7" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#041821" media="(prefers-color-scheme: dark)" />
+
+    <!-- Google Fonts: Inter, Plus Jakarta Sans & JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Structured Data JSON-LD -->
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+
+    <!-- Theme Initialization Script: Default is Clean Light Theme unless 'dark' is saved -->
+    <script is:inline>
+      (function () {
+        try {
+          const saved = localStorage.getItem('memoryreel-theme');
+          if (saved === 'dark') {
+            document.documentElement.classList.add('dark');
+          } else {
+            document.documentElement.classList.remove('dark');
+          }
+        } catch (e) {}
+      })();
+    </script>
+  </head>
+  <body class="min-h-screen flex flex-col">
+    <slot />
+  </body>
+</html>
