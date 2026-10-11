@@ -7,13 +7,10 @@ interface Props {
 
 const { locale = 'en' } = Astro.props;
 const t = getTranslations(locale);
-
-const getLocaleHref = (code: Locale) => {
-  return code === 'en' ? '/' : `/${code}/`;
-};
 ---
 
 <header
+  role="banner"
   class="sticky top-0 z-50 w-full backdrop-blur-xl bg-[#FCFBF7]/90 dark:bg-[#041821]/90 border-b border-[#4D8DBA]/25 dark:border-[#97D7FF]/20 transition-colors duration-200"
 >
   <nav
@@ -23,7 +20,7 @@ const getLocaleHref = (code: Locale) => {
     <!-- Brand Logo (Icon-only on mobile/tablet, full brand + badge on desktop lg+) -->
     <div class="flex items-center gap-3">
       <a
-        href={getLocaleHref(locale)}
+        href="/"
         class="group flex items-center gap-2.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#4D8DBA] rounded-xl p-1"
         aria-label={t.nav.brand}
         title={t.nav.brand}
@@ -54,10 +51,16 @@ const getLocaleHref = (code: Locale) => {
           </svg>
         </div>
         <div class="hidden lg:flex flex-col">
-          <span class="font-display font-bold text-lg tracking-tight text-[#086288] dark:text-[#FFEFC4] leading-none">
+          <span
+            data-i18n="nav.brand"
+            class="font-display font-bold text-lg tracking-tight text-[#086288] dark:text-[#FFEFC4] leading-none"
+          >
             {t.nav.brand}
           </span>
-          <span class="text-[11px] font-medium text-[#4D8DBA] dark:text-[#97D7FF] mt-0.5">
+          <span
+            data-i18n="nav.tagline"
+            class="text-[11px] font-medium text-[#4D8DBA] dark:text-[#97D7FF] mt-0.5"
+          >
             {t.nav.tagline}
           </span>
         </div>
@@ -67,8 +70,8 @@ const getLocaleHref = (code: Locale) => {
       <div
         class="hidden lg:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-[#97D7FF]/25 dark:bg-[#086288]/50 text-[#086288] dark:text-[#97D7FF] border border-[#4D8DBA]/30 dark:border-[#97D7FF]/30"
       >
-        <span class="w-1.5 h-1.5 rounded-full bg-[#086288] dark:bg-[#FFEFC4] animate-pulse"></span>
-        <span>{t.nav.privacyBadge}</span>
+        <span class="w-1.5 h-1.5 rounded-full bg-[#086288] dark:bg-[#FFEFC4] animate-pulse" aria-hidden="true"></span>
+        <span data-i18n="nav.privacyBadge">{t.nav.privacyBadge}</span>
       </div>
     </div>
 
@@ -81,6 +84,7 @@ const getLocaleHref = (code: Locale) => {
           id="lang-dropdown-btn"
           aria-expanded="false"
           aria-haspopup="true"
+          aria-controls="lang-dropdown-menu"
           aria-label={t.nav.languageLabel}
           title={t.nav.languageLabel}
           class="inline-flex items-center justify-center gap-2 h-10 px-2.5 lg:px-3.5 rounded-xl bg-[#97D7FF]/20 hover:bg-[#97D7FF]/35 dark:bg-[#072534] dark:hover:bg-[#086288]/70 text-[#086288] dark:text-[#97D7FF] border border-[#4D8DBA]/30 dark:border-[#97D7FF]/25 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[#4D8DBA]"
@@ -101,8 +105,11 @@ const getLocaleHref = (code: Locale) => {
             <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"></path>
             <path d="M2 12h20"></path>
           </svg>
-          <span class="hidden lg:inline text-xs font-semibold uppercase tracking-wider">
-            {locale}
+          <span
+            id="active-lang-label"
+            class="hidden lg:inline text-xs font-semibold uppercase tracking-wider"
+          >
+            {LOCALES.find((l) => l.code === locale)?.label ?? 'US'} • {LOCALES.find((l) => l.code === locale)?.nativeName ?? 'English'}
           </span>
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -119,21 +126,25 @@ const getLocaleHref = (code: Locale) => {
           </svg>
         </button>
 
-        <!-- Dropdown Menu -->
+        <!-- Dropdown Menu (All 7 Languages: en, es, pt, de, fr, ja, zh) -->
         <div
           id="lang-dropdown-menu"
           role="menu"
+          aria-label="Select Language"
           aria-orientation="vertical"
-          class="hidden absolute right-0 mt-2 w-44 rounded-xl bg-white dark:bg-[#072534] shadow-xl border border-[#4D8DBA]/30 dark:border-[#97D7FF]/25 py-1.5 z-50"
+          class="hidden absolute right-0 mt-2 w-56 rounded-xl bg-white dark:bg-[#072534] shadow-xl border border-[#4D8DBA]/30 dark:border-[#97D7FF]/25 py-1.5 z-50"
         >
           {
             LOCALES.map((item) => {
               const isActive = item.code === locale;
               return (
                 <a
-                  href={getLocaleHref(item.code)}
+                  href={item.code === 'en' ? '/' : `/?lang=${item.code}`}
+                  data-lang-code={item.code}
+                  data-lang-label={`${item.label} • ${item.nativeName}`}
                   role="menuitem"
-                  class={`flex items-center justify-between px-3.5 py-2 text-sm transition-colors ${
+                  aria-label={`${item.nativeName} (${item.label})`}
+                  class={`lang-option-item flex items-center justify-between px-3.5 py-2 text-sm transition-colors ${
                     isActive
                       ? 'bg-[#97D7FF]/30 dark:bg-[#086288] text-[#086288] dark:text-[#FFEFC4] font-semibold'
                       : 'text-slate-700 dark:text-slate-200 hover:bg-[#97D7FF]/15 dark:hover:bg-[#086288]/50'
@@ -141,9 +152,12 @@ const getLocaleHref = (code: Locale) => {
                 >
                   <span class="flex items-center gap-2">
                     <span aria-hidden="true">{item.flag}</span>
+                    <span class="text-[11px] font-mono font-bold px-1.5 py-0.5 rounded bg-[#97D7FF]/25 dark:bg-[#041821]/70 text-[#086288] dark:text-[#97D7FF]">
+                      {item.label}
+                    </span>
                     <span>{item.nativeName}</span>
                   </span>
-                  <span class="text-xs uppercase font-mono opacity-70">{item.code}</span>
+                  <span class="text-xs lowercase font-mono opacity-70">{item.code}</span>
                 </a>
               );
             })
@@ -197,8 +211,8 @@ const getLocaleHref = (code: Locale) => {
         >
           <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path>
         </svg>
-        <span class="hidden lg:inline text-xs font-semibold dark:hidden">{t.nav.themeDark}</span>
-        <span class="hidden lg:dark:inline text-xs font-semibold">{t.nav.themeLight}</span>
+        <span data-i18n="nav.themeDark" class="hidden lg:inline text-xs font-semibold dark:hidden">{t.nav.themeDark}</span>
+        <span data-i18n="nav.themeLight" class="hidden lg:dark:inline text-xs font-semibold">{t.nav.themeLight}</span>
       </button>
 
       <!-- Support Developer CTA (BuyMeACoffee) - Strict Icon-only on mobile/tablet, full label on desktop lg+ -->
@@ -227,18 +241,92 @@ const getLocaleHref = (code: Locale) => {
           <path d="M16 8a1 1 0 0 1 1 1v8a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V9a1 1 0 0 1 1-1h14a4 4 0 1 1 0 8h-1"></path>
           <path d="M6 2v2"></path>
         </svg>
-        <span class="hidden lg:inline">{t.nav.supportCta}</span>
+        <span data-i18n="nav.supportCta" class="hidden lg:inline">{t.nav.supportCta}</span>
       </a>
     </div>
   </nav>
 </header>
 
 <script>
+  import { LOCALES, getTranslations, type Locale } from '../i18n/translations';
+
+  function applyLocaleToPage(code: Locale, pushUrl = false) {
+    const dict = getTranslations(code);
+    document.documentElement.lang = code;
+
+    // Update page title & meta description
+    document.title = dict.meta.title;
+    const descMeta = document.getElementById('seo-description');
+    if (descMeta) descMeta.setAttribute('content', dict.meta.description);
+
+    // Update all static elements with data-i18n="section.key"
+    document.querySelectorAll<HTMLElement>('[data-i18n]').forEach((el) => {
+      const path = el.dataset.i18n;
+      if (!path) return;
+      const [sec, key] = path.split('.');
+      const sectionObj = (dict as unknown as Record<string, Record<string, string>>)[sec];
+      if (sectionObj && sectionObj[key]) {
+        el.textContent = sectionObj[key];
+      }
+    });
+
+    // Update active language label in navbar
+    const locMeta = LOCALES.find((l) => l.code === code);
+    const activeLabelEl = document.getElementById('active-lang-label');
+    if (activeLabelEl && locMeta) {
+      activeLabelEl.textContent = `${locMeta.label} • ${locMeta.nativeName}`;
+    }
+
+    // Highlight active item in dropdown
+    document.querySelectorAll<HTMLAnchorElement>('.lang-option-item').forEach((item) => {
+      const isCurrent = item.dataset.langCode === code;
+      item.className = `lang-option-item flex items-center justify-between px-3.5 py-2 text-sm transition-colors ${
+        isCurrent
+          ? 'bg-[#97D7FF]/30 dark:bg-[#086288] text-[#086288] dark:text-[#FFEFC4] font-semibold'
+          : 'text-slate-700 dark:text-slate-200 hover:bg-[#97D7FF]/15 dark:hover:bg-[#086288]/50'
+      }`;
+    });
+
+    try {
+      localStorage.setItem('memoryreel-locale', code);
+    } catch {}
+
+    if (pushUrl && typeof window !== 'undefined') {
+      const nextUrl = code === 'en' ? '/' : `/?lang=${code}`;
+      window.history.replaceState({}, '', nextUrl);
+    }
+
+    window.dispatchEvent(new CustomEvent('memoryreel:locale-changed', { detail: code }));
+  }
+
   function initNavbarInteractions() {
     const themeBtn = document.getElementById('theme-toggle-btn');
     const langBtn = document.getElementById('lang-dropdown-btn');
     const langMenu = document.getElementById('lang-dropdown-menu');
     const langRoot = document.getElementById('lang-dropdown-Root');
+
+    // Detect initial language from ?lang= query param or saved preference
+    const params = new URLSearchParams(window.location.search);
+    const urlLang = params.get('lang') as Locale | null;
+    const savedLang = (() => {
+      try {
+        return localStorage.getItem('memoryreel-locale') as Locale | null;
+      } catch {
+        return null;
+      }
+    })();
+
+    const validCodes = LOCALES.map((l) => l.code);
+    const initialLang =
+      urlLang && validCodes.includes(urlLang)
+        ? urlLang
+        : savedLang && validCodes.includes(savedLang)
+          ? savedLang
+          : null;
+
+    if (initialLang && initialLang !== 'en') {
+      applyLocaleToPage(initialLang, false);
+    }
 
     if (themeBtn && !themeBtn.dataset.bound) {
       themeBtn.dataset.bound = 'true';
@@ -247,9 +335,7 @@ const getLocaleHref = (code: Locale) => {
         const isDark = htmlEl.classList.toggle('dark');
         try {
           localStorage.setItem('memoryreel-theme', isDark ? 'dark' : 'light');
-        } catch {
-          // Ignore storage errors in private browsing
-        }
+        } catch {}
       });
     }
 
@@ -259,6 +345,18 @@ const getLocaleHref = (code: Locale) => {
         e.stopPropagation();
         const isHidden = langMenu.classList.toggle('hidden');
         langBtn.setAttribute('aria-expanded', String(!isHidden));
+      });
+
+      document.querySelectorAll<HTMLAnchorElement>('.lang-option-item').forEach((item) => {
+        item.addEventListener('click', (e) => {
+          e.preventDefault();
+          const code = item.dataset.langCode as Locale | undefined;
+          if (code) {
+            applyLocaleToPage(code, true);
+          }
+          langMenu.classList.add('hidden');
+          langBtn.setAttribute('aria-expanded', 'false');
+        });
       });
 
       document.addEventListener('click', (e) => {

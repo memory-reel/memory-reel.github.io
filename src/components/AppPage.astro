@@ -15,10 +15,52 @@ const t = getTranslations(locale);
 <Layout locale={locale}>
   <Navbar locale={locale} />
 
-  <main class="flex-1">
+  <main id="main-content" class="flex-1">
+    <!-- Semantic Breadcrumb Navigation Bar (100% Breadcrumb SEO & Accessibility) -->
+    <nav
+      aria-label="Breadcrumb"
+      class="bg-[#97D7FF]/10 dark:bg-[#072534]/60 border-b border-[#4D8DBA]/20 dark:border-[#97D7FF]/15"
+    >
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2">
+        <ol
+          class="flex items-center gap-2 text-xs font-medium text-slate-600 dark:text-slate-300"
+          itemscope
+          itemtype="https://schema.org/BreadcrumbList"
+        >
+          <li
+            itemprop="itemListElement"
+            itemscope
+            itemtype="https://schema.org/ListItem"
+            class="flex items-center gap-1.5"
+          >
+            <a
+              itemprop="item"
+              href="https://memory-reel.github.io/"
+              class="text-[#086288] dark:text-[#97D7FF] hover:underline font-semibold"
+            >
+              <span itemprop="name">Home</span>
+            </a>
+            <meta itemprop="position" content="1" />
+          </li>
+          <li aria-hidden="true" class="text-[#4D8DBA] dark:text-[#97D7FF]/60">/</li>
+          <li
+            itemprop="itemListElement"
+            itemscope
+            itemtype="https://schema.org/ListItem"
+            aria-current="page"
+            class="text-slate-700 dark:text-[#FFEFC4] font-semibold truncate"
+          >
+            <span itemprop="name" data-i18n="nav.tagline">{t.nav.tagline}</span>
+            <meta itemprop="position" content="2" />
+          </li>
+        </ol>
+      </div>
+    </nav>
+
     <!-- Hero Header Section -->
     <section
-      class="relative overflow-hidden pt-10 pb-8 sm:pt-14 sm:pb-12 border-b border-[#4D8DBA]/25 dark:border-[#97D7FF]/20"
+      aria-labelledby="hero-heading"
+      class="relative overflow-hidden pt-9 pb-8 sm:pt-12 sm:pb-12 border-b border-[#4D8DBA]/25 dark:border-[#97D7FF]/20"
     >
       <!-- Ambient Background Glow (#97D7FF & #FFEFC4) -->
       <div
@@ -31,15 +73,17 @@ const t = getTranslations(locale);
         <div
           class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#FFEFC4]/80 dark:bg-[#086288]/70 border border-[#086288]/20 dark:border-[#97D7FF]/35 text-[#086288] dark:text-[#FFEFC4] text-xs font-semibold mb-5 shadow-sm"
         >
-          <span class="w-2 h-2 rounded-full bg-[#086288] dark:bg-[#97D7FF] animate-pulse"></span>
-          <span>{t.hero.badge}</span>
+          <span class="w-2 h-2 rounded-full bg-[#086288] dark:bg-[#97D7FF] animate-pulse" aria-hidden="true"></span>
+          <span data-i18n="hero.badge">{t.hero.badge}</span>
         </div>
 
         <h1
+          id="hero-heading"
           class="font-display font-extrabold text-3xl sm:text-5xl lg:text-6xl tracking-tight text-[#086288] dark:text-white max-w-4xl mx-auto leading-[1.12]"
         >
-          {t.hero.titleStart}{' '}
+          <span data-i18n="hero.titleStart">{t.hero.titleStart}</span>{' '}
           <span
+            data-i18n="hero.titleHighlight"
             class="bg-gradient-to-r from-[#086288] via-[#4D8DBA] to-[#086288] dark:from-[#97D7FF] dark:via-[#FFEFC4] dark:to-[#97D7FF] bg-clip-text text-transparent"
           >
             {t.hero.titleHighlight}
@@ -47,6 +91,7 @@ const t = getTranslations(locale);
         </h1>
 
         <p
+          data-i18n="hero.subtitle"
           class="mt-4 text-sm sm:text-base lg:text-lg text-slate-600 dark:text-slate-300 max-w-2xl mx-auto leading-relaxed"
         >
           {t.hero.subtitle}
@@ -57,36 +102,51 @@ const t = getTranslations(locale);
           <div class="card-surface p-3.5 flex items-center gap-3">
             <div
               class="w-9 h-9 rounded-xl bg-[#086288] text-[#FFEFC4] flex items-center justify-center shrink-0 font-bold text-sm shadow-sm"
+              aria-hidden="true"
             >
               01
             </div>
             <div>
-              <p class="text-xs font-bold text-[#086288] dark:text-[#FFEFC4]">{t.hero.statZeroServer}</p>
-              <p class="text-[11px] text-slate-500 dark:text-slate-300">{t.hero.statZeroServerDesc}</p>
+              <p data-i18n="hero.statZeroServer" class="text-xs font-bold text-[#086288] dark:text-[#FFEFC4]">
+                {t.hero.statZeroServer}
+              </p>
+              <p data-i18n="hero.statZeroServerDesc" class="text-[11px] text-slate-500 dark:text-slate-300">
+                {t.hero.statZeroServerDesc}
+              </p>
             </div>
           </div>
 
           <div class="card-surface p-3.5 flex items-center gap-3">
             <div
               class="w-9 h-9 rounded-xl bg-[#4D8DBA] text-white flex items-center justify-center shrink-0 font-bold text-sm shadow-sm"
+              aria-hidden="true"
             >
               02
             </div>
             <div>
-              <p class="text-xs font-bold text-[#086288] dark:text-[#97D7FF]">{t.hero.stat1080p}</p>
-              <p class="text-[11px] text-slate-500 dark:text-slate-300">{t.hero.stat1080pDesc}</p>
+              <p data-i18n="hero.stat1080p" class="text-xs font-bold text-[#086288] dark:text-[#97D7FF]">
+                {t.hero.stat1080p}
+              </p>
+              <p data-i18n="hero.stat1080pDesc" class="text-[11px] text-slate-500 dark:text-slate-300">
+                {t.hero.stat1080pDesc}
+              </p>
             </div>
           </div>
 
           <div class="card-surface p-3.5 flex items-center gap-3">
             <div
               class="w-9 h-9 rounded-xl bg-[#FFEFC4] text-[#086288] border border-[#086288]/20 flex items-center justify-center shrink-0 font-bold text-sm shadow-sm"
+              aria-hidden="true"
             >
               03
             </div>
             <div>
-              <p class="text-xs font-bold text-[#086288] dark:text-[#FFEFC4]">{t.hero.statInstant}</p>
-              <p class="text-[11px] text-slate-500 dark:text-slate-300">{t.hero.statInstantDesc}</p>
+              <p data-i18n="hero.statInstant" class="text-xs font-bold text-[#086288] dark:text-[#FFEFC4]">
+                {t.hero.statInstant}
+              </p>
+              <p data-i18n="hero.statInstantDesc" class="text-[11px] text-slate-500 dark:text-slate-300">
+                {t.hero.statInstantDesc}
+              </p>
             </div>
           </div>
         </div>
@@ -95,85 +155,126 @@ const t = getTranslations(locale);
 
     <!-- Main Interactive React Studio Island (MediaUploader + Sortable Storyboard + VideoRenderer) -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
-      <Storyboard client:load locale={locale} includeUploader={true} />
+      <Storyboard client:idle locale={locale} includeUploader={true} />
     </div>
 
     <!-- Technical SEO & Educational Architecture Section -->
     <section
+      aria-labelledby="how-it-works-heading"
       class="border-t border-[#4D8DBA]/25 dark:border-[#97D7FF]/20 bg-[#97D7FF]/10 dark:bg-[#072534]/50 py-14 sm:py-20"
     >
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-14">
         <!-- 3-Step Architecture Explanation -->
         <div>
           <h2
+            id="how-it-works-heading"
+            data-i18n="seoSection.howItWorksTitle"
             class="font-display text-2xl sm:text-3xl font-bold text-center text-[#086288] dark:text-[#FFEFC4] mb-8"
           >
             {t.seoSection.howItWorksTitle}
           </h2>
           <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
             <article class="card-surface p-6">
-              <h3 class="font-display font-bold text-base text-[#086288] dark:text-[#97D7FF] mb-2">
+              <h3
+                data-i18n="seoSection.step1Title"
+                class="font-display font-bold text-base text-[#086288] dark:text-[#97D7FF] mb-2"
+              >
                 {t.seoSection.step1Title}
               </h3>
-              <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+              <p
+                data-i18n="seoSection.step1Desc"
+                class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed"
+              >
                 {t.seoSection.step1Desc}
               </p>
             </article>
 
             <article class="card-surface p-6">
-              <h3 class="font-display font-bold text-base text-[#086288] dark:text-[#97D7FF] mb-2">
+              <h3
+                data-i18n="seoSection.step2Title"
+                class="font-display font-bold text-base text-[#086288] dark:text-[#97D7FF] mb-2"
+              >
                 {t.seoSection.step2Title}
               </h3>
-              <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+              <p
+                data-i18n="seoSection.step2Desc"
+                class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed"
+              >
                 {t.seoSection.step2Desc}
               </p>
             </article>
 
             <article class="card-surface p-6">
-              <h3 class="font-display font-bold text-base text-[#086288] dark:text-[#97D7FF] mb-2">
+              <h3
+                data-i18n="seoSection.step3Title"
+                class="font-display font-bold text-base text-[#086288] dark:text-[#97D7FF] mb-2"
+              >
                 {t.seoSection.step3Title}
               </h3>
-              <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+              <p
+                data-i18n="seoSection.step3Desc"
+                class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed"
+              >
                 {t.seoSection.step3Desc}
               </p>
             </article>
           </div>
         </div>
 
-        <!-- FAQ Section -->
-        <div class="max-w-3xl mx-auto">
+        <!-- Semantic FAQ Accordion Section -->
+        <div class="max-w-3xl mx-auto" aria-labelledby="faq-heading">
           <h2
+            id="faq-heading"
+            data-i18n="seoSection.faqTitle"
             class="font-display text-2xl font-bold text-center text-[#086288] dark:text-[#FFEFC4] mb-6"
           >
             {t.seoSection.faqTitle}
           </h2>
           <div class="space-y-4">
-            <div class="card-surface p-5">
-              <h3 class="font-display font-bold text-sm sm:text-base text-[#086288] dark:text-[#97D7FF]">
-                {t.seoSection.faq1Q}
-              </h3>
-              <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mt-1.5 leading-relaxed">
+            <details class="card-surface p-5 group" open>
+              <summary
+                class="font-display font-bold text-sm sm:text-base text-[#086288] dark:text-[#97D7FF] cursor-pointer list-none flex items-center justify-between gap-2"
+              >
+                <h3 data-i18n="seoSection.faq1Q" class="inline">{t.seoSection.faq1Q}</h3>
+                <span class="text-[#4D8DBA] dark:text-[#FFEFC4] transition-transform group-open:rotate-180" aria-hidden="true">▼</span>
+              </summary>
+              <p
+                data-i18n="seoSection.faq1A"
+                class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mt-2.5 leading-relaxed"
+              >
                 {t.seoSection.faq1A}
               </p>
-            </div>
+            </details>
 
-            <div class="card-surface p-5">
-              <h3 class="font-display font-bold text-sm sm:text-base text-[#086288] dark:text-[#97D7FF]">
-                {t.seoSection.faq2Q}
-              </h3>
-              <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mt-1.5 leading-relaxed">
+            <details class="card-surface p-5 group" open>
+              <summary
+                class="font-display font-bold text-sm sm:text-base text-[#086288] dark:text-[#97D7FF] cursor-pointer list-none flex items-center justify-between gap-2"
+              >
+                <h3 data-i18n="seoSection.faq2Q" class="inline">{t.seoSection.faq2Q}</h3>
+                <span class="text-[#4D8DBA] dark:text-[#FFEFC4] transition-transform group-open:rotate-180" aria-hidden="true">▼</span>
+              </summary>
+              <p
+                data-i18n="seoSection.faq2A"
+                class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mt-2.5 leading-relaxed"
+              >
                 {t.seoSection.faq2A}
               </p>
-            </div>
+            </details>
 
-            <div class="card-surface p-5">
-              <h3 class="font-display font-bold text-sm sm:text-base text-[#086288] dark:text-[#97D7FF]">
-                {t.seoSection.faq3Q}
-              </h3>
-              <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mt-1.5 leading-relaxed">
+            <details class="card-surface p-5 group" open>
+              <summary
+                class="font-display font-bold text-sm sm:text-base text-[#086288] dark:text-[#97D7FF] cursor-pointer list-none flex items-center justify-between gap-2"
+              >
+                <h3 data-i18n="seoSection.faq3Q" class="inline">{t.seoSection.faq3Q}</h3>
+                <span class="text-[#4D8DBA] dark:text-[#FFEFC4] transition-transform group-open:rotate-180" aria-hidden="true">▼</span>
+              </summary>
+              <p
+                data-i18n="seoSection.faq3A"
+                class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mt-2.5 leading-relaxed"
+              >
                 {t.seoSection.faq3A}
               </p>
-            </div>
+            </details>
           </div>
         </div>
       </div>
@@ -182,23 +283,30 @@ const t = getTranslations(locale);
 
   <!-- Minimalist Footer -->
   <footer
+    role="contentinfo"
     class="border-t border-[#4D8DBA]/25 dark:border-[#97D7FF]/20 py-8 bg-white dark:bg-[#041821] text-xs text-slate-500 dark:text-slate-400"
   >
     <div
       class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4"
     >
       <div>
-        <p class="font-semibold text-[#086288] dark:text-[#97D7FF]">{t.seoSection.footerCopyright}</p>
-        <p class="mt-0.5">{t.seoSection.footerPrivacyNote}</p>
+        <p data-i18n="seoSection.footerCopyright" class="font-semibold text-[#086288] dark:text-[#97D7FF]">
+          {t.seoSection.footerCopyright}
+        </p>
+        <p data-i18n="seoSection.footerPrivacyNote" class="mt-0.5">
+          {t.seoSection.footerPrivacyNote}
+        </p>
       </div>
 
       <a
         href="https://buymeacoffee.com/kisharadilz"
         target="_blank"
         rel="noopener noreferrer"
+        aria-label={t.nav.supportCta}
         class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#FFEFC4] hover:bg-[#97D7FF] text-[#086288] border border-[#086288]/20 font-bold transition-colors shadow-sm"
       >
-        <span>☕ {t.nav.supportCta}</span>
+        <span aria-hidden="true">☕</span>
+        <span data-i18n="nav.supportCta">{t.nav.supportCta}</span>
       </a>
     </div>
   </footer>

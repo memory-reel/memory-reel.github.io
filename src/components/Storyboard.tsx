@@ -48,7 +48,32 @@ export interface StoryboardProps {
 }
 
 export default function Storyboard({ locale = 'en', includeUploader = true }: StoryboardProps) {
-  const t = getTranslations(locale);
+  const [activeLocale, setActiveLocale] = useState<Locale>(locale);
+  const t = getTranslations(activeLocale);
+
+  // Synchronize with client-side language selector on https://memory-reel.github.io/
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const urlLang = params.get('lang') as Locale | null;
+    const savedLang = (() => {
+      try {
+        return localStorage.getItem('memoryreel-locale') as Locale | null;
+      } catch {
+        return null;
+      }
+    })();
+    if (urlLang) setActiveLocale(urlLang);
+    else if (savedLang) setActiveLocale(savedLang);
+
+    const onLocaleChanged = (e: Event) => {
+      const custom = e as CustomEvent<Locale>;
+      if (custom.detail) {
+        setActiveLocale(custom.detail);
+      }
+    };
+    window.addEventListener('memoryreel:locale-changed', onLocaleChanged);
+    return () => window.removeEventListener('memoryreel:locale-changed', onLocaleChanged);
+  }, []);
 
   // Core Media State
   const [slides, setSlides] = useState<SlideItem[]>([]);
@@ -375,7 +400,7 @@ export default function Storyboard({ locale = 'en', includeUploader = true }: St
       {/* Step 2 Integrated Uploader */}
       {includeUploader && (
         <MediaUploader
-          locale={locale}
+          locale={activeLocale}
           slides={slides}
           audioTrack={audioTrack}
           onSlidesAdded={handleAddSlides}
@@ -411,15 +436,15 @@ export default function Storyboard({ locale = 'en', includeUploader = true }: St
 
           {/* Summary Pills */}
           {slides.length > 0 && (
-            <div class="flex flex-wrap items-center gap-2">
+            <div class="flex flex-wrap items-center gap-2" aria-live="polite">
               <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#97D7FF]/30 dark:bg-[#086288] text-[#086288] dark:text-[#97D7FF] text-xs font-semibold border border-[#4D8DBA]/30">
-                <Layers className="w-3.5 h-3.5 text-[#086288] dark:text-[#FFEFC4]" />
+                <Layers className="w-3.5 h-3.5 text-[#086288] dark:text-[#FFEFC4]" aria-hidden="true" />
                 <span>
                   {slides.length} {t.storyboard.slidesLabel}
                 </span>
               </span>
               <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#FFEFC4] dark:bg-[#072534] text-[#086288] dark:text-[#FFEFC4] text-xs font-semibold border border-[#086288]/20 dark:border-[#97D7FF]/25">
-                <Clock className="w-3.5 h-3.5 text-[#086288] dark:text-[#FFEFC4]" />
+                <Clock className="w-3.5 h-3.5 text-[#086288] dark:text-[#FFEFC4]" aria-hidden="true" />
                 <span>
                   {t.storyboard.totalDuration}: <strong>{totalDurationSec.toFixed(1)}s</strong>
                 </span>
@@ -433,7 +458,7 @@ export default function Storyboard({ locale = 'en', includeUploader = true }: St
           {/* Global Slide Duration */}
           <div class="flex flex-wrap items-center gap-2.5">
             <div class="flex items-center gap-1.5 text-xs font-semibold text-[#086288] dark:text-[#97D7FF]">
-              <Clock className="w-4 h-4 text-[#4D8DBA] dark:text-[#FFEFC4]" />
+              <Clock className="w-4 h-4 text-[#4D8DBA] dark:text-[#FFEFC4]" aria-hidden="true" />
               <label htmlFor="global-duration-input">{t.storyboard.globalDurationLabel}:</label>
             </div>
             <div class="inline-flex items-center rounded-xl bg-[#97D7FF]/20 dark:bg-[#041821] border border-[#4D8DBA]/30 dark:border-[#97D7FF]/25 p-0.5">
@@ -452,6 +477,7 @@ export default function Storyboard({ locale = 'en', includeUploader = true }: St
               </span>
               <button
                 type="button"
+                aria-label={t.storyboard.applyToAllBtn}
                 onClick={applyGlobalDurationToAll}
                 disabled={slides.length === 0}
                 class="px-2.5 py-1 rounded-lg bg-[#086288] hover:bg-[#4D8DBA] text-[#FFEFC4] text-xs font-semibold shadow-sm transition-colors disabled:opacity-40"
@@ -465,7 +491,7 @@ export default function Storyboard({ locale = 'en', includeUploader = true }: St
           <div class="flex flex-wrap items-center gap-3">
             {/* Crossfade Duration */}
             <div class="flex items-center gap-1.5 text-xs">
-              <Sliders className="w-3.5 h-3.5 text-[#4D8DBA] dark:text-[#97D7FF]" />
+              <Sliders className="w-3.5 h-3.5 text-[#4D8DBA] dark:text-[#97D7FF]" aria-hidden="true" />
               <span class="font-medium text-slate-600 dark:text-slate-300">
                 {t.storyboard.transitionLabel}:
               </span>
@@ -483,7 +509,7 @@ export default function Storyboard({ locale = 'en', includeUploader = true }: St
 
             {/* Aspect Ratio Selector */}
             <div class="flex items-center gap-1.5 text-xs">
-              <Maximize2 className="w-3.5 h-3.5 text-[#4D8DBA] dark:text-[#97D7FF]" />
+              <Maximize2 className="w-3.5 h-3.5 text-[#4D8DBA] dark:text-[#97D7FF]" aria-hidden="true" />
               <span class="font-medium text-slate-600 dark:text-slate-300">
                 {t.storyboard.aspectRatioLabel}:
               </span>
@@ -515,6 +541,7 @@ export default function Storyboard({ locale = 'en', includeUploader = true }: St
             {/* Ken Burns Toggle */}
             <button
               type="button"
+              aria-label={t.storyboard.kenBurnsLabel}
               onClick={() => setEnableKenBurns((v) => !v)}
               aria-pressed={enableKenBurns}
               class={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold border transition-all ${
@@ -523,7 +550,7 @@ export default function Storyboard({ locale = 'en', includeUploader = true }: St
                   : 'bg-slate-100 dark:bg-[#041821] border-slate-200 dark:border-slate-700 text-slate-500'
               }`}
             >
-              <Wand2 className="w-3.5 h-3.5" />
+              <Wand2 className="w-3.5 h-3.5" aria-hidden="true" />
               <span>{t.storyboard.kenBurnsLabel}</span>
             </button>
           </div>
@@ -535,7 +562,7 @@ export default function Storyboard({ locale = 'en', includeUploader = true }: St
         {slides.length === 0 ? (
           <div class="card-surface p-10 sm:p-14 text-center flex flex-col items-center justify-center border border-dashed border-[#4D8DBA]/40 dark:border-[#97D7FF]/30">
             <div class="w-14 h-14 rounded-2xl bg-[#97D7FF]/30 dark:bg-[#086288] flex items-center justify-center text-[#086288] dark:text-[#FFEFC4] mb-4">
-              <Film className="w-7 h-7" />
+              <Film className="w-7 h-7" aria-hidden="true" />
             </div>
             <h3 class="font-display font-bold text-lg text-[#086288] dark:text-white">
               {t.storyboard.emptyTitle}
@@ -545,10 +572,11 @@ export default function Storyboard({ locale = 'en', includeUploader = true }: St
             </p>
             <button
               type="button"
+              aria-label={t.uploader.loadDemoBtn}
               onClick={handleQuickDemoFromEmptyState}
               class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#086288] hover:bg-[#4D8DBA] text-[#FFEFC4] font-semibold text-sm shadow-md shadow-[#086288]/25 transition-all"
             >
-              <Sparkles className="w-4 h-4" />
+              <Sparkles className="w-4 h-4" aria-hidden="true" />
               <span>{t.uploader.loadDemoBtn}</span>
             </button>
           </div>
@@ -613,14 +641,17 @@ export default function Storyboard({ locale = 'en', includeUploader = true }: St
                     <img
                       src={slide.previewUrl}
                       alt={slide.caption || slide.name}
+                      width={slide.width}
+                      height={slide.height}
                       class="w-full h-full object-cover select-none pointer-events-none"
                       loading="lazy"
+                      decoding="async"
                     />
 
                     {/* Top Overlay: Sequence Number + Drag Grip + 1080p Tag */}
                     <div class="absolute inset-x-2 top-2 flex items-center justify-between pointer-events-none">
                       <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-[#086288]/90 backdrop-blur-md text-[#FFEFC4] font-mono text-xs font-bold shadow">
-                        <GripVertical className="w-3.5 h-3.5 text-[#97D7FF] cursor-grab" />
+                        <GripVertical className="w-3.5 h-3.5 text-[#97D7FF] cursor-grab" aria-hidden="true" />
                         #{index + 1}
                       </span>
 
@@ -648,7 +679,7 @@ export default function Storyboard({ locale = 'en', includeUploader = true }: St
                       {/* Per-Slide Duration Stepper */}
                       <div class="flex items-center justify-between gap-2 bg-[#97D7FF]/15 dark:bg-[#041821]/80 px-2.5 py-1.5 rounded-xl border border-[#4D8DBA]/25 dark:border-[#97D7FF]/20">
                         <span class="text-[11px] font-medium text-[#086288] dark:text-[#97D7FF] flex items-center gap-1">
-                          <Clock className="w-3 h-3 text-[#4D8DBA] dark:text-[#FFEFC4]" />
+                          <Clock className="w-3 h-3 text-[#4D8DBA] dark:text-[#FFEFC4]" aria-hidden="true" />
                           Duration
                         </span>
                         <div class="flex items-center gap-1">
@@ -685,6 +716,7 @@ export default function Storyboard({ locale = 'en', includeUploader = true }: St
                       {/* Optional Caption Input */}
                       <input
                         type="text"
+                        aria-label={`Slide ${index + 1} caption`}
                         placeholder={t.storyboard.captionPlaceholder}
                         value={slide.caption}
                         onChange={(e) => updateSlideCaption(slide.id, e.target.value)}
@@ -704,8 +736,8 @@ export default function Storyboard({ locale = 'en', includeUploader = true }: St
                           aria-label={t.storyboard.moveEarlier}
                           class="p-1.5 rounded-lg bg-[#97D7FF]/25 hover:bg-[#97D7FF]/50 dark:bg-[#086288] dark:hover:bg-[#4D8DBA] text-[#086288] dark:text-[#FFEFC4] disabled:opacity-30 transition-colors"
                         >
-                          <ChevronUp className="w-4 h-4 block lg:hidden" />
-                          <ChevronLeft className="w-4 h-4 hidden lg:block" />
+                          <ChevronUp className="w-4 h-4 block lg:hidden" aria-hidden="true" />
+                          <ChevronLeft className="w-4 h-4 hidden lg:block" aria-hidden="true" />
                         </button>
 
                         {/* Move Later (Down on mobile/tablet, Right on desktop lg+) */}
@@ -717,8 +749,8 @@ export default function Storyboard({ locale = 'en', includeUploader = true }: St
                           aria-label={t.storyboard.moveLater}
                           class="p-1.5 rounded-lg bg-[#97D7FF]/25 hover:bg-[#97D7FF]/50 dark:bg-[#086288] dark:hover:bg-[#4D8DBA] text-[#086288] dark:text-[#FFEFC4] disabled:opacity-30 transition-colors"
                         >
-                          <ChevronDown className="w-4 h-4 block lg:hidden" />
-                          <ChevronRight className="w-4 h-4 hidden lg:block" />
+                          <ChevronDown className="w-4 h-4 block lg:hidden" aria-hidden="true" />
+                          <ChevronRight className="w-4 h-4 hidden lg:block" aria-hidden="true" />
                         </button>
                       </div>
 
@@ -730,7 +762,7 @@ export default function Storyboard({ locale = 'en', includeUploader = true }: St
                           aria-label={t.storyboard.duplicateSlide}
                           class="p-1.5 rounded-lg hover:bg-[#97D7FF]/25 dark:hover:bg-[#086288] text-[#4D8DBA] hover:text-[#086288] dark:text-[#97D7FF] dark:hover:text-[#FFEFC4] transition-colors"
                         >
-                          <Copy className="w-3.5 h-3.5" />
+                          <Copy className="w-3.5 h-3.5" aria-hidden="true" />
                         </button>
                         <button
                           type="button"
@@ -739,7 +771,7 @@ export default function Storyboard({ locale = 'en', includeUploader = true }: St
                           aria-label={t.storyboard.removeSlide}
                           class="p-1.5 rounded-lg hover:bg-rose-50 dark:hover:bg-rose-950/60 text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 transition-colors"
                         >
-                          <Trash2 className="w-3.5 h-3.5" />
+                          <Trash2 className="w-3.5 h-3.5" aria-hidden="true" />
                         </button>
                       </div>
                     </div>
@@ -757,7 +789,7 @@ export default function Storyboard({ locale = 'en', includeUploader = true }: St
             <div class="lg:col-span-7 card-surface p-4 sm:p-6 flex flex-col justify-between">
               <div class="flex items-center justify-between gap-2 mb-3">
                 <div class="flex items-center gap-2">
-                  <span class="w-2.5 h-2.5 rounded-full bg-[#4D8DBA] dark:bg-[#97D7FF]"></span>
+                  <span class="w-2.5 h-2.5 rounded-full bg-[#4D8DBA] dark:bg-[#97D7FF]" aria-hidden="true"></span>
                   <h3 class="font-display font-bold text-sm sm:text-base text-[#086288] dark:text-[#FFEFC4]">
                     {t.storyboard.previewTitle}
                   </h3>
@@ -770,6 +802,7 @@ export default function Storyboard({ locale = 'en', includeUploader = true }: St
               <div class="relative w-full rounded-xl bg-[#041821] overflow-hidden flex items-center justify-center aspect-video border border-[#4D8DBA]/35 shadow-inner">
                 <canvas
                   ref={previewCanvasRef}
+                  aria-label={t.storyboard.previewTitle}
                   class="max-w-full max-h-full object-contain"
                 />
               </div>
@@ -778,17 +811,18 @@ export default function Storyboard({ locale = 'en', includeUploader = true }: St
               <div class="mt-4 flex items-center gap-3">
                 <button
                   type="button"
+                  aria-label={isPlayingPreview ? t.storyboard.pausePreview : t.storyboard.playPreview}
                   onClick={() => setIsPlayingPreview((p) => !p)}
                   class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#086288] hover:bg-[#4D8DBA] text-[#FFEFC4] font-semibold text-xs shrink-0 transition-all shadow-sm"
                 >
                   {isPlayingPreview ? (
                     <>
-                      <Pause className="w-3.5 h-3.5" />
+                      <Pause className="w-3.5 h-3.5" aria-hidden="true" />
                       <span>{t.storyboard.pausePreview}</span>
                     </>
                   ) : (
                     <>
-                      <Play className="w-3.5 h-3.5 fill-current" />
+                      <Play className="w-3.5 h-3.5 fill-current" aria-hidden="true" />
                       <span>{t.storyboard.playPreview}</span>
                     </>
                   )}
@@ -814,14 +848,20 @@ export default function Storyboard({ locale = 'en', includeUploader = true }: St
             <div class="lg:col-span-5 card-surface p-5 sm:p-6 flex flex-col justify-between">
               {isRendering ? (
                 /* Active Rendering State ("Stitching your memory...") */
-                <div class="flex flex-col items-center justify-center text-center my-auto py-4 space-y-4">
+                <div
+                  role="status"
+                  aria-live="polite"
+                  aria-atomic="true"
+                  class="flex flex-col items-center justify-center text-center my-auto py-4 space-y-4"
+                >
                   <div class="relative w-full aspect-video rounded-xl overflow-hidden bg-[#041821] border border-[#97D7FF]/50 shadow-lg">
                     <canvas
                       ref={renderCanvasRef}
+                      aria-label="Video encoding live canvas"
                       class="w-full h-full object-contain"
                     />
                     <div class="absolute top-2.5 left-2.5 px-2.5 py-1 rounded-lg bg-[#086288]/90 backdrop-blur-md text-[#FFEFC4] text-[11px] font-mono flex items-center gap-1.5">
-                      <span class="w-2 h-2 rounded-full bg-[#FFEFC4] animate-ping"></span>
+                      <span class="w-2 h-2 rounded-full bg-[#FFEFC4] animate-ping" aria-hidden="true"></span>
                       <span>REC • 1080p</span>
                     </div>
                   </div>
@@ -836,7 +876,14 @@ export default function Storyboard({ locale = 'en', includeUploader = true }: St
                       </span>
                     </div>
 
-                    <div class="w-full h-2.5 rounded-full bg-[#97D7FF]/25 dark:bg-[#041821] overflow-hidden">
+                    <div
+                      role="progressbar"
+                      aria-valuemin={0}
+                      aria-valuemax={100}
+                      aria-valuenow={renderProgress?.percent ?? 0}
+                      aria-label={t.storyboard.renderingTitle}
+                      class="w-full h-2.5 rounded-full bg-[#97D7FF]/25 dark:bg-[#041821] overflow-hidden"
+                    >
                       <div
                         class="h-full bg-gradient-to-r from-[#086288] via-[#4D8DBA] to-[#97D7FF] transition-all duration-150 rounded-full"
                         style={{ width: `${renderProgress?.percent ?? 0}%` }}
@@ -850,19 +897,24 @@ export default function Storyboard({ locale = 'en', includeUploader = true }: St
 
                   <button
                     type="button"
+                    aria-label={t.storyboard.cancelRenderBtn}
                     onClick={handleCancelRender}
                     class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 text-xs font-semibold hover:bg-rose-100 transition-colors"
                   >
-                    <XCircle className="w-4 h-4" />
+                    <XCircle className="w-4 h-4" aria-hidden="true" />
                     <span>{t.storyboard.cancelRenderBtn}</span>
                   </button>
                 </div>
               ) : renderOutput ? (
                 /* Completed Video Export Card */
-                <div class="flex flex-col justify-between h-full space-y-4">
+                <div
+                  role="status"
+                  aria-live="polite"
+                  class="flex flex-col justify-between h-full space-y-4"
+                >
                   <div>
                     <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#FFEFC4] dark:bg-[#086288] text-[#086288] dark:text-[#FFEFC4] text-xs font-semibold mb-2">
-                      <CheckCircle2 className="w-4 h-4" />
+                      <CheckCircle2 className="w-4 h-4" aria-hidden="true" />
                       <span>{t.storyboard.readyTitle}</span>
                     </div>
                     <p class="text-xs text-slate-600 dark:text-slate-300">
@@ -875,6 +927,7 @@ export default function Storyboard({ locale = 'en', includeUploader = true }: St
                       src={renderOutput.url}
                       controls
                       playsInline
+                      aria-label={t.storyboard.readyTitle}
                       class="w-full h-full object-contain"
                     />
                   </div>
@@ -882,10 +935,11 @@ export default function Storyboard({ locale = 'en', includeUploader = true }: St
                   <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5">
                     <a
                       href={renderOutput.url}
+                      aria-label={t.storyboard.downloadVideoBtn}
                       download={`MemoryReel-${new Date().toISOString().slice(0, 10)}.${renderOutput.extension}`}
                       class="flex-1 inline-flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-[#086288] hover:bg-[#4D8DBA] text-[#FFEFC4] font-semibold text-sm shadow-lg shadow-[#086288]/25 transition-all"
                     >
-                      <Download className="w-4 h-4" />
+                      <Download className="w-4 h-4" aria-hidden="true" />
                       <span>
                         {t.storyboard.downloadVideoBtn} (.{renderOutput.extension.toUpperCase()} •{' '}
                         {formatBytes(renderOutput.blob.size)})
@@ -894,10 +948,11 @@ export default function Storyboard({ locale = 'en', includeUploader = true }: St
 
                     <button
                       type="button"
+                      aria-label={t.storyboard.createNewRenderBtn}
                       onClick={() => setRenderOutput(null)}
                       class="inline-flex items-center justify-center gap-1.5 px-3.5 py-3 rounded-xl bg-[#97D7FF]/25 hover:bg-[#97D7FF]/45 dark:bg-[#086288]/70 dark:hover:bg-[#086288] text-[#086288] dark:text-[#97D7FF] text-xs font-semibold transition-colors"
                     >
-                      <RotateCcw className="w-3.5 h-3.5" />
+                      <RotateCcw className="w-3.5 h-3.5" aria-hidden="true" />
                       <span>{t.storyboard.createNewRenderBtn}</span>
                     </button>
                   </div>
@@ -907,7 +962,7 @@ export default function Storyboard({ locale = 'en', includeUploader = true }: St
                 <div class="flex flex-col justify-between h-full space-y-5">
                   <div class="space-y-3">
                     <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#086288] via-[#4D8DBA] to-[#97D7FF] flex items-center justify-center text-[#FFEFC4] shadow-md shadow-[#086288]/25">
-                      <Film className="w-6 h-6" />
+                      <Film className="w-6 h-6" aria-hidden="true" />
                     </div>
 
                     <h3 class="font-display font-bold text-lg sm:text-xl text-[#086288] dark:text-[#FFEFC4]">
@@ -944,7 +999,7 @@ export default function Storyboard({ locale = 'en', includeUploader = true }: St
                     </div>
 
                     {renderError && (
-                      <div class="p-3 rounded-xl bg-rose-50 dark:bg-rose-950/60 border border-rose-200 dark:border-rose-800 text-xs text-rose-600 dark:text-rose-300">
+                      <div role="alert" class="p-3 rounded-xl bg-rose-50 dark:bg-rose-950/60 border border-rose-200 dark:border-rose-800 text-xs text-rose-600 dark:text-rose-300">
                         {renderError}
                       </div>
                     )}
@@ -952,10 +1007,11 @@ export default function Storyboard({ locale = 'en', includeUploader = true }: St
 
                   <button
                     type="button"
+                    aria-label={t.storyboard.createMemoryBtn}
                     onClick={handleCreateMemory}
                     class="w-full inline-flex items-center justify-center gap-2.5 px-6 py-4 rounded-2xl bg-gradient-to-r from-[#086288] via-[#4D8DBA] to-[#086288] hover:from-[#4D8DBA] hover:to-[#086288] text-[#FFEFC4] font-display font-bold text-base shadow-xl shadow-[#086288]/30 transition-all active:scale-[0.99]"
                   >
-                    <Sparkles className="w-5 h-5 text-[#FFEFC4]" />
+                    <Sparkles className="w-5 h-5 text-[#FFEFC4]" aria-hidden="true" />
                     <span>{t.storyboard.createMemoryBtn}</span>
                   </button>
                 </div>

@@ -9,36 +9,132 @@ interface Props {
 const { locale = 'en' } = Astro.props;
 const t = getTranslations(locale);
 
-const siteUrl = 'https://memory-reel.github.io';
-const canonicalPath = locale === 'en' ? '/' : `/${locale}/`;
-const canonicalUrl = new URL(canonicalPath, siteUrl).toString();
+const siteUrl = 'https://memory-reel.github.io/';
+const ogImageUrl = 'https://memory-reel.github.io/og-image.svg';
 
 const jsonLd = {
   '@context': 'https://schema.org',
-  '@type': 'SoftwareApplication',
-  name: 'MemoryReel',
-  headline: t.meta.title,
-  description: t.meta.description,
-  url: canonicalUrl,
-  applicationCategory: 'MultimediaApplication',
-  operatingSystem: 'Any (Web Browser)',
-  offers: {
-    '@type': 'Offer',
-    price: '0',
-    priceCurrency: 'USD',
-  },
-  featureList: [
-    '100% Client-Side Photo to Video Slideshow Creator',
-    'Zero Server Uploads for Complete Privacy',
-    'Automatic Off-Screen 1080p Image Downscaling',
-    'Interactive Drag-and-Drop Storyboard Timeline',
-    'HTML5 Canvas & MediaRecorder Video Stitching with Audio',
+  '@graph': [
+    {
+      '@type': 'WebSite',
+      '@id': 'https://memory-reel.github.io/#website',
+      url: siteUrl,
+      name: 'MemoryReel',
+      alternateName: 'MemoryReel Zero-Server Slideshow Creator',
+      description: t.meta.description,
+      inLanguage: ['en', 'es', 'pt', 'de', 'fr', 'ja', 'zh'],
+    },
+    {
+      '@type': 'SoftwareApplication',
+      '@id': 'https://memory-reel.github.io/#application',
+      name: 'MemoryReel',
+      headline: t.meta.title,
+      description: t.meta.description,
+      url: siteUrl,
+      image: ogImageUrl,
+      screenshot: ogImageUrl,
+      applicationCategory: 'MultimediaApplication',
+      applicationSubCategory: 'VideoEditor',
+      operatingSystem: 'Any (Web Browser)',
+      isAccessibleForFree: true,
+      offers: {
+        '@type': 'Offer',
+        price: '0.00',
+        priceCurrency: 'USD',
+        availability: 'https://schema.org/InStock',
+      },
+      featureList: [
+        '100% Client-Side Photo to Video Slideshow Creator',
+        'Zero Server Uploads for Complete Privacy',
+        'Automatic Off-Screen 1080p Image Downscaling',
+        'Interactive Drag-and-Drop Storyboard Timeline',
+        'HTML5 Canvas & MediaRecorder Video Stitching with Audio',
+      ],
+      author: {
+        '@type': 'Person',
+        name: 'Kishara Dilz',
+        url: 'https://buymeacoffee.com/kisharadilz',
+      },
+    },
+    {
+      '@type': 'BreadcrumbList',
+      '@id': 'https://memory-reel.github.io/#breadcrumb',
+      itemListElement: [
+        {
+          '@type': 'ListItem',
+          position: 1,
+          name: 'Home',
+          item: 'https://memory-reel.github.io/',
+        },
+        {
+          '@type': 'ListItem',
+          position: 2,
+          name: 'Zero-Server Storyboard & Slideshow Studio',
+          item: 'https://memory-reel.github.io/#main-content',
+        },
+      ],
+    },
+    {
+      '@type': 'HowTo',
+      '@id': 'https://memory-reel.github.io/#howto',
+      name: t.seoSection.howItWorksTitle,
+      description: t.meta.description,
+      totalTime: 'PT1M',
+      step: [
+        {
+          '@type': 'HowToStep',
+          position: 1,
+          name: t.seoSection.step1Title,
+          text: t.seoSection.step1Desc,
+          url: 'https://memory-reel.github.io/#uploader-heading',
+        },
+        {
+          '@type': 'HowToStep',
+          position: 2,
+          name: t.seoSection.step2Title,
+          text: t.seoSection.step2Desc,
+          url: 'https://memory-reel.github.io/#storyboard-heading',
+        },
+        {
+          '@type': 'HowToStep',
+          position: 3,
+          name: t.seoSection.step3Title,
+          text: t.seoSection.step3Desc,
+          url: 'https://memory-reel.github.io/#how-it-works-heading',
+        },
+      ],
+    },
+    {
+      '@type': 'FAQPage',
+      '@id': 'https://memory-reel.github.io/#faq',
+      mainEntity: [
+        {
+          '@type': 'Question',
+          name: t.seoSection.faq1Q,
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: t.seoSection.faq1A,
+          },
+        },
+        {
+          '@type': 'Question',
+          name: t.seoSection.faq2Q,
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: t.seoSection.faq2A,
+          },
+        },
+        {
+          '@type': 'Question',
+          name: t.seoSection.faq3Q,
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: t.seoSection.faq3A,
+          },
+        },
+      ],
+    },
   ],
-  author: {
-    '@type': 'Person',
-    name: 'Kishara Dilz',
-    url: 'https://buymeacoffee.com/kisharadilz',
-  },
 };
 ---
 
@@ -57,38 +153,64 @@ const jsonLd = {
 
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>{t.meta.title}</title>
-    <meta name="description" content={t.meta.description} />
-    <meta name="keywords" content={t.meta.keywords} />
-    <meta name="robots" content="index, follow" />
-    <link rel="canonical" href={canonicalUrl} />
+    <title id="seo-title">{t.meta.title}</title>
+    <meta id="seo-description" name="description" content={t.meta.description} />
+    <meta id="seo-keywords" name="keywords" content={t.meta.keywords} />
+    <meta name="author" content="Kishara Dilz" />
+    <meta
+      name="robots"
+      content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
+    />
+    <link rel="canonical" href={siteUrl} />
 
-    <!-- Alternate hreflang tags for en, es, fr, de -->
-    <link rel="alternate" hreflang="x-default" href={`${siteUrl}/`} />
+    <!-- Alternate hreflang tags for all 7 supported languages -->
+    <link rel="alternate" hreflang="x-default" href={siteUrl} />
     {
       LOCALES.map((loc) => (
         <link
           rel="alternate"
           hreflang={loc.code}
-          href={loc.code === 'en' ? `${siteUrl}/` : `${siteUrl}/${loc.code}/`}
+          href={loc.code === 'en' ? siteUrl : `${siteUrl}?lang=${loc.code}`}
         />
       ))
     }
 
-    <!-- OpenGraph / Social Meta -->
+    <!-- OpenGraph / Social Meta (100% Complete with Image, Dimensions & Alt) -->
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="MemoryReel" />
     <meta property="og:title" content={t.meta.title} />
     <meta property="og:description" content={t.meta.description} />
-    <meta property="og:url" content={canonicalUrl} />
-    <meta property="og:locale" content={locale} />
+    <meta property="og:url" content={siteUrl} />
+    <meta property="og:image" content={ogImageUrl} />
+    <meta property="og:image:type" content="image/svg+xml" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta
+      property="og:image:alt"
+      content="MemoryReel — Zero-Server 1080p Storyboard & Slideshow Video Creator"
+    />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:locale:alternate" content="es_ES" />
+    <meta property="og:locale:alternate" content="pt_BR" />
+    <meta property="og:locale:alternate" content="de_DE" />
+    <meta property="og:locale:alternate" content="fr_FR" />
+    <meta property="og:locale:alternate" content="ja_JP" />
+    <meta property="og:locale:alternate" content="zh_CN" />
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={t.meta.title} />
     <meta name="twitter:description" content={t.meta.description} />
+    <meta name="twitter:image" content={ogImageUrl} />
+    <meta
+      name="twitter:image:alt"
+      content="MemoryReel — Zero-Server 1080p Storyboard & Slideshow Video Creator"
+    />
 
+    <!-- Icons & Web App Manifest -->
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/favicon.svg" />
+    <link rel="manifest" href="/site.webmanifest" />
     <meta name="theme-color" content="#FCFBF7" media="(prefers-color-scheme: light)" />
     <meta name="theme-color" content="#041821" media="(prefers-color-scheme: dark)" />
 
@@ -100,7 +222,7 @@ const jsonLd = {
       rel="stylesheet"
     />
 
-    <!-- Structured Data JSON-LD -->
+    <!-- Structured Data JSON-LD (@graph: WebSite, SoftwareApplication, BreadcrumbList, HowTo, FAQPage) -->
     <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
 
     <!-- Theme Initialization Script: Default is Clean Light Theme unless 'dark' is saved -->
@@ -118,6 +240,13 @@ const jsonLd = {
     </script>
   </head>
   <body class="min-h-screen flex flex-col">
+    <!-- Accessibility Skip Link -->
+    <a
+      href="#main-content"
+      class="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[100] focus:px-4 focus:py-2.5 focus:rounded-xl focus:bg-[#086288] focus:text-[#FFEFC4] focus:font-semibold focus:shadow-lg"
+    >
+      Skip to main content
+    </a>
     <slot />
   </body>
 </html>

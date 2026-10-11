@@ -1,0 +1,17 @@
+{
+  "name": "MemoryReel | Zero-Server Storyboard & Slideshow Creator",
+  "short_name": "MemoryReel",
+  "description": "Free online slideshow maker and private photo reel maker. Create 1080p videos from photos and music directly in your browser with zero server uploads.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#041821",
+  "theme_color": "#086288",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

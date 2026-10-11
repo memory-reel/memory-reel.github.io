@@ -271,11 +271,18 @@ export default function MediaUploader({
             </div>
 
             {isCompressing ? (
-              <div class="w-full max-w-xs space-y-2.5">
+              <div class="w-full max-w-xs space-y-2.5" role="status" aria-live="polite" aria-atomic="true">
                 <p class="text-sm font-semibold text-[#086288] dark:text-[#FFEFC4]">
                   {t.uploader.compressingStatus}
                 </p>
-                <div class="w-full h-2.5 rounded-full bg-[#97D7FF]/30 dark:bg-[#041821] overflow-hidden">
+                <div
+                  class="w-full h-2.5 rounded-full bg-[#97D7FF]/30 dark:bg-[#041821] overflow-hidden"
+                  role="progressbar"
+                  aria-valuemin={0}
+                  aria-valuemax={compressionProgress.total}
+                  aria-valuenow={compressionProgress.processed}
+                  aria-label={t.uploader.compressingStatus}
+                >
                   <div
                     class="h-full bg-gradient-to-r from-[#086288] to-[#4D8DBA] dark:from-[#4D8DBA] dark:to-[#97D7FF] transition-all duration-200 rounded-full"
                     style={{
@@ -302,19 +309,21 @@ export default function MediaUploader({
                 <div class="flex flex-wrap items-center justify-center gap-3">
                   <button
                     type="button"
+                    aria-label={t.uploader.browsePhotosBtn}
                     onClick={() => photoInputRef.current?.click()}
                     class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#086288] hover:bg-[#4D8DBA] text-white font-semibold text-sm shadow-md shadow-[#086288]/25 transition-all active:scale-95"
                   >
-                    <Upload className="w-4 h-4 text-[#FFEFC4]" />
+                    <Upload className="w-4 h-4 text-[#FFEFC4]" aria-hidden="true" />
                     <span>{t.uploader.browsePhotosBtn}</span>
                   </button>
 
                   <button
                     type="button"
+                    aria-label={t.uploader.loadDemoBtn}
                     onClick={handleLoadSampleStoryboard}
                     class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#FFEFC4] hover:bg-[#97D7FF]/60 text-[#086288] font-semibold text-sm border border-[#086288]/20 transition-all shadow-sm"
                   >
-                    <Sparkles className="w-4 h-4 text-[#086288]" />
+                    <Sparkles className="w-4 h-4 text-[#086288]" aria-hidden="true" />
                     <span>{t.uploader.loadDemoBtn}</span>
                   </button>
                 </div>
@@ -323,7 +332,10 @@ export default function MediaUploader({
 
             {/* Memory Optimization Footer Bar */}
             {slides.length > 0 && (
-              <div class="w-full mt-6 pt-4 border-t border-[#4D8DBA]/25 dark:border-[#97D7FF]/20 flex flex-wrap items-center justify-between gap-2 text-xs">
+              <div
+                aria-live="polite"
+                class="w-full mt-6 pt-4 border-t border-[#4D8DBA]/25 dark:border-[#97D7FF]/20 flex flex-wrap items-center justify-between gap-2 text-xs"
+              >
                 <div class="flex items-center gap-2 text-[#086288] dark:text-[#97D7FF] font-medium">
                   <CheckCircle2 className="w-4 h-4 shrink-0 text-[#086288] dark:text-[#FFEFC4]" />
                   <span>
